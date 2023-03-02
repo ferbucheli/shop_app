@@ -1,41 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shop_app/screens/product_detail_screen.dart';
+
+import '../providers/product.dart';
 
 class ProductItem extends StatelessWidget {
-  final String id;
-  final String title;
-  final String imageUrl;
-
-  const ProductItem(
-      {super.key,
-      required this.id,
-      required this.title,
-      required this.imageUrl});
-
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: GridTile(
-        footer: GridTileBar(
-          leading: IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.favorite),
-            color: Theme.of(context).colorScheme.secondary,
+    //final product = Provider.of<Product>(context);
+    return Consumer(
+      builder: (context, Product product, child) => ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: GridTile(
+          footer: GridTileBar(
+            leading: IconButton(
+              onPressed: () {
+                (product).toggleFavoriteStatus();
+              },
+              icon: Icon((product).isFavorite
+                  ? Icons.favorite
+                  : Icons.favorite_border),
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+            backgroundColor: Colors.black87,
+            title: Text(
+              product.title,
+              textAlign: TextAlign.center,
+            ),
+            trailing: IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.shopping_cart),
+              color: Theme.of(context).colorScheme.secondary,
+            ),
           ),
-          backgroundColor: Colors.black87,
-          title: Text(
-            title,
-            textAlign: TextAlign.center,
+          child: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pushNamed(
+                ProductDetailScreen.routeName,
+                arguments: product.id,
+              );
+            },
+            child: Image.network(
+              product.imageUrl,
+              fit: BoxFit.cover,
+            ),
           ),
-          trailing: IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.shopping_cart),
-            color: Theme.of(context).colorScheme.secondary,
-          ),
-        ),
-        child: Image.network(
-          imageUrl,
-          fit: BoxFit.cover,
         ),
       ),
     );
